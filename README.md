@@ -1,0 +1,2 @@
+# goworkspace
+Go learning repo
