@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 )
 
@@ -173,6 +175,111 @@ func main() {
 	fmt.Println(Ali.school)
 	fmt.Println(&Ali.school) // This references the value set in the Student struct which is a space set in memory for a string
 
+	// rectangle := rect{width: 10, height: 5}
+	// fmt.Println("Area: ", rectangle.area())
+	// fmt.Println("Perim: ", rectangle.perim())
+
+	// measure(rectangle)
+
+	// recta := rect{width: 10, height: 5}
+	// measure(recta)
+
+	recta := rect{width: 20, height: 40}
+	measure(recta)
+
+	area, perim := measure(recta)
+	fmt.Printf("The area of the rectangle is: %v and the Perimeter is: %v\n", area, perim)
+
+	f("Direct")
+	go f("Goroutine")
+
+	// Example go func
+	go func(msg string) {
+		fmt.Println(msg)
+	}("Starting Parrallel Go routine")
+
+	time.Sleep(time.Second)
+	fmt.Println("done")
+
+	// Example of channles. // Create a new channel with make(chan val-type) // Messages can be passed from one go routine to another
+	messages := make(chan string)
+	go func() { messages <- "ping" }()
+	msg := <-messages
+	fmt.Println(msg)
+
+	// TCP port scanner slow
+	// for i := 1; i <= 1024; i++ {
+	// 	address := fmt.Sprintf("scanme.nmap.org:%d", i)
+	// 	conn, err := net.Dial("tcp", address)
+	// 	if err != nil {
+	// 		// Port is closed or filtered
+	// 		continue
+	// 	}
+	// 	conn.Close()
+	// 	fmt.Printf("%d open\n", i)
+	// }
+
+	// Example port runner with the waitgroup and sync faster using a worker pool // The worker function is defined outside of main
+	// ports := make(chan int, 100)
+	// var wg sync.WaitGroup
+	// for i := 0; i < cap(ports); i++ {
+	// 	go worker(ports, &wg)
+	// }
+	// for i := 1; i < 1024; i++ {
+	// 	wg.Add(1)
+	// 	ports <- i
+	// }
+	// wg.Wait()
+	// close(ports)
+
+	// Example fast TCP port scanner and passing results to a result channel and gathering the openports in the openports array then sorting it in order.
+	ports := make(chan int, 100)
+	results := make(chan int)
+	var openports []int
+	for i := 0; i < cap(ports); i++ {
+		go worker(ports, results)
+	}
+
+	go func() {
+		for i := 1; i <= 1024; i++ {
+			ports <- i
+		}
+	}()
+
+	for i := 0; i < 1024; i++ {
+		port := <-results
+		if port != 0 {
+			openports = append(openports, port)
+		}
+	}
+	close(ports)
+	close(results)
+	sort.Ints(openports)
+	for _, port := range openports {
+		fmt.Printf("%d open\n", port)
+	}
+	// End of TCP Scanner pool \\
+
+	// Worker pool example \\
+	const numJobs = 5
+	jobs := make(chan int, numJobs)
+	result := make(chan int, numJobs)
+
+	// Define how many workers you want
+	for w := 1; w <= 3; w++ {
+		go workers(w, jobs, result)
+	}
+
+	// Pass the job number to numJobs
+	for j := 1; j <= numJobs; j++ {
+		jobs <- j
+	}
+	close(jobs)
+
+	for a := 1; a <= numJobs; a++ {
+		<-result
+	}
+
 	// ================================= END OF MAIN ================================= //
 }
 
@@ -232,4 +339,68 @@ func student(name string, age int, current_grade int, grade int, gpa float64, sc
 	stu.club = club
 	return &stu
 
+}
+
+// Example of interfaces Go mechanism for grouping and naming related sets of methods
+type geometry interface {
+	area() float64
+	perim() float64
+}
+
+// Go supports methods defined on Structs   // Syntax is func (*struct) funName() type { }
+type rect struct {
+	width, height float64
+}
+
+func (r rect) area() float64 { // Has to be with out the (r *rect) to be able to implement the methods in an interface.
+	return r.width * r.height
+}
+func (r rect) perim() float64 {
+	return 2*r.width + 2*r.height
+}
+
+// Measure implements the methods stored in geometry interface.
+func measure(g geometry) (float64, float64) {
+	// fmt.Println(g)
+	// fmt.Println(g.area())
+	// fmt.Println(g.perim())
+	return g.area(), g.perim()
+}
+
+// Example of GO Routines  // A GO routine is a lightweight thread of execution. // Go Routines can be called by the go keyword example funciton in main go func
+func f(from string) {
+	for i := 0; i < 3; i++ {
+		fmt.Println(from, ":", i)
+	}
+}
+
+// func worker(ports chan int, wg *sync.WaitGroup) {
+// 	for p := range ports {
+// 		fmt.Println(p)
+// 		wg.Done()
+// 	}
+// }
+
+// Example of worker function using another channel for the results.
+func worker(ports, results chan int) {
+	for p := range ports {
+		address := fmt.Sprintf("scanme.nmap.org:%d", p)
+		conn, err := net.Dial("tcp", address)
+		if err != nil {
+			results <- 0
+			continue
+		}
+		conn.Close()
+		results <- p
+	}
+}
+
+// Example of Another worker function
+func workers(id int, jobs <-chan int, results chan<- int) {
+	for j := range jobs {
+		fmt.Println("worker", id, "started job", j)
+		time.Sleep(time.Second)
+		fmt.Println("worker", id, "finish job", j)
+		results <- j * 2
+	}
 }
