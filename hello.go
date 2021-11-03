@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net"
 	"os"
 	"path/filepath"
-	"sort"
 	"time"
 )
 
@@ -233,52 +231,55 @@ func main() {
 	// close(ports)
 
 	// Example fast TCP port scanner and passing results to a result channel and gathering the openports in the openports array then sorting it in order.
-	ports := make(chan int, 100)
-	results := make(chan int)
-	var openports []int
-	for i := 0; i < cap(ports); i++ {
-		go worker(ports, results)
-	}
+	// ports := make(chan int, 100)
+	// results := make(chan int)
+	// var openports []int
+	// for i := 0; i < cap(ports); i++ {
+	// 	go worker(ports, results)
+	// }
 
-	go func() {
-		for i := 1; i <= 1024; i++ {
-			ports <- i
-		}
-	}()
+	// go func() {
+	// 	for i := 1; i <= 1024; i++ {
+	// 		ports <- i
+	// 	}
+	// }()
 
-	for i := 0; i < 1024; i++ {
-		port := <-results
-		if port != 0 {
-			openports = append(openports, port)
-		}
-	}
-	close(ports)
-	close(results)
-	sort.Ints(openports)
-	for _, port := range openports {
-		fmt.Printf("%d open\n", port)
-	}
-	// End of TCP Scanner pool \\
+	// for i := 0; i < 1024; i++ {
+	// 	port := <-results
+	// 	if port != 0 {
+	// 		openports = append(openports, port)
+	// 	}
+	// }
+	// close(ports)
+	// close(results)
+	// sort.Ints(openports)
+	// for _, port := range openports {
+	// 	fmt.Printf("%d open\n", port)
+	// }
+	// // End of TCP Scanner pool \\
 
-	// Worker pool example \\
-	const numJobs = 5
-	jobs := make(chan int, numJobs)
-	result := make(chan int, numJobs)
+	// // Worker pool example \\
+	// const numJobs = 5
+	// jobs := make(chan int, numJobs)
+	// result := make(chan int, numJobs)
 
-	// Define how many workers you want
-	for w := 1; w <= 3; w++ {
-		go workers(w, jobs, result)
-	}
+	// // Define how many workers you want
+	// for w := 1; w <= 3; w++ {
+	// 	go workers(w, jobs, result)
+	// }
 
-	// Pass the job number to numJobs
-	for j := 1; j <= numJobs; j++ {
-		jobs <- j
-	}
-	close(jobs)
+	// // Pass the job number to numJobs
+	// for j := 1; j <= numJobs; j++ {
+	// 	jobs <- j
+	// }
+	// close(jobs)
 
-	for a := 1; a <= numJobs; a++ {
-		<-result
-	}
+	// for a := 1; a <= numJobs; a++ {
+	// 	<-result
+	// }
+	fmt.Print("\n")
+	sampleBuffchannel()
+	// close(messages)
 
 	// ================================= END OF MAIN ================================= //
 }
@@ -382,25 +383,65 @@ func f(from string) {
 // }
 
 // Example of worker function using another channel for the results.
-func worker(ports, results chan int) {
-	for p := range ports {
-		address := fmt.Sprintf("scanme.nmap.org:%d", p)
-		conn, err := net.Dial("tcp", address)
-		if err != nil {
-			results <- 0
-			continue
-		}
-		conn.Close()
-		results <- p
-	}
-}
+// func worker(ports, results chan int) {
+// 	for p := range ports {
+// 		address := fmt.Sprintf("scanme.nmap.org:%d", p)
+// 		conn, err := net.Dial("tcp", address)
+// 		if err != nil {
+// 			results <- 0
+// 			continue
+// 		}
+// 		conn.Close()
+// 		results <- p
+// 	}
+// }
 
-// Example of Another worker function
-func workers(id int, jobs <-chan int, results chan<- int) {
-	for j := range jobs {
-		fmt.Println("worker", id, "started job", j)
-		time.Sleep(time.Second)
-		fmt.Println("worker", id, "finish job", j)
-		results <- j * 2
+// // Example of Another worker function
+// func workers(id int, jobs <-chan int, results chan<- int) {
+// 	for j := range jobs {
+// 		fmt.Println("worker", id, "started job", j)
+// 		time.Sleep(time.Second)
+// 		fmt.Println("worker", id, "finish job", j)
+// 		results <- j * 2
+// 	}
+// }
+
+// Simple example of buffered channels
+// By default channels are unbuffered meaning that they will only accept sends ( chan <- )
+// if there is a corresponding receive ( <- chan ) ready to received the sent value
+//Buffered channel accept a limited number of values without a corresponing receiver for those values.
+
+func sampleBuffchannel() {
+	messages := make(chan string, 5) // Five is the maximum things the channel can hold at one.
+	// If for exmple more than three strings are passed at once it will crash.
+	// For loop passes on a the time in this case.
+	// messages <- "Buffered"
+	// messages <- "channel"
+	// messages <- "Third"
+	words := make([]string, 5)
+	words[0] = "Buffered"
+	words[1] = "channel"
+	words[2] = "ThirdandFive"
+	words[3] = "ThirdandFour"
+	words[4] = "ThirdandSix"
+	// fmt.Println(words)
+	// fmt.Println(<-messages)
+	// fmt.Println(<-messages)
+	// fmt.Println(<-messages)
+	for _, word := range words {
+		messages <- word
+		// time.Sleep(time.Second)
+		// fmt.Printf("Hello message: %v \n", <-messages)
 	}
+	close(messages)
+	fmt.Println("########################## Printing messages from the channel ##########################")
+	fmt.Print("\n")
+	for elem := range messages {
+		time.Sleep(time.Second)
+		fmt.Printf("Hello message: %v \n", elem)
+		fmt.Print("\n")
+		// close(messages)
+	}
+	fmt.Println("################### Done ###################")
+
 }
