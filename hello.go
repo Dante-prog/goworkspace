@@ -132,7 +132,16 @@ func main() {
 	slice = append(slice, "Robert Moss", "Ed Sheran", "Black Eyed Pays", "Legend", "Lenon", "RBD", "Backstreet Boys")
 	fmt.Println(slice)
 
-	// Composite literal and another slice init example
+	// Make a slice first is the TYPE in below case INT
+	// The second parameter is the lenght
+	// The third parameter here is the cap, ( Maximum number of elements it can hold this can increase if it is exeeded ) basically the
+	// Underlaying array is size or allocation is increased.
+	tumeric := make([]int, 5, 100)
+	fmt.Println(tumeric)
+	fmt.Printf("The length of the slice is: %v\n", len(tumeric))
+	fmt.Printf("The total amount of elements the Slice can hold: %v\n", cap(tumeric))
+
+	// Composite literal and another slice init example without make --> This is less efficient.
 	sli := []int{1, 2, 3, 4, 5}
 	fmt.Println(sli)
 
@@ -140,6 +149,15 @@ func main() {
 	fmt.Println(sli[1:])
 	fmt.Println(sli[:4])
 	fmt.Println(sli[2:4])
+
+	// Append a slice to another slice.
+	slix := []int{50, 60, 70, 80}
+	sli = append(sli, slix...)
+	fmt.Println(sli)
+
+	// Deleting from a slice, have to slice it a the positions you want and then take out all the data with the ... if not it will give TYPE error.
+	sli = append(sli[:3], sli[5:]...)
+	fmt.Println(sli)
 
 	// Another way to iterate through a slice ( without using range ) - range is recommended.
 	for i := 0; i <= 4; i++ {
@@ -155,6 +173,29 @@ func main() {
 	m["ED SHERAN"] = "Castle on the hill"
 	m["JHON LENON"] = "Imagine"
 	fmt.Println(m)
+
+	// Check wheater a key exists in a map
+	value, ok := m["Kevin"]
+	fmt.Println(value) // Prints out the value of the key kevin if it exists.
+	fmt.Println(ok)    // This ( ok ) is a bool that will evaluate to false if it does not exists or true if it does.
+
+	// if check to see if value exist syntax // if kevin is in map then the ok will be true and the if will execute and vise versa.
+	if value, ok := m["Kevin"]; ok {
+		fmt.Println("This is checking if a map key exists", value)
+	}
+
+	// Add a new value and key to the map
+	m["Kevin"] = "Portlan main"
+
+	// Iterate through the map and print the keys and values.
+	fmt.Print("Printing the keys and values of the map... \n")
+	for key, values := range m {
+		fmt.Println(key, values)
+	}
+
+	// Delete a key from a map, Syntax --> delete(<MapName>, KEY)
+	delete(m, "Kevin")
+	fmt.Println("This is the new map", m)
 
 	// Declare a map in a single line
 	newMap := map[string]int{"foo": 1, "bar": 2}
