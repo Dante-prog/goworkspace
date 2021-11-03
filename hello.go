@@ -132,6 +132,21 @@ func main() {
 	slice = append(slice, "Robert Moss", "Ed Sheran", "Black Eyed Pays", "Legend", "Lenon", "RBD", "Backstreet Boys")
 	fmt.Println(slice)
 
+	// Composite literal and another slice init example
+	sli := []int{1, 2, 3, 4, 5}
+	fmt.Println(sli)
+
+	// Slicing slices.
+	fmt.Println(sli[1:])
+	fmt.Println(sli[:4])
+	fmt.Println(sli[2:4])
+
+	// Another way to iterate through a slice ( without using range ) - range is recommended.
+	for i := 0; i <= 4; i++ {
+		fmt.Println(i, sli[i])
+	}
+
+	// Two dimensional slice
 	twoD := make([][]int, 3)
 	fmt.Println(twoD)
 
@@ -140,6 +155,7 @@ func main() {
 	m["ED SHERAN"] = "Castle on the hill"
 	m["JHON LENON"] = "Imagine"
 	fmt.Println(m)
+
 	// Declare a map in a single line
 	newMap := map[string]int{"foo": 1, "bar": 2}
 	fmt.Println("map:", newMap)
