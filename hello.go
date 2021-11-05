@@ -337,9 +337,42 @@ func main() {
 	fmt.Print("\n")
 	sampleBuffchannel()
 	// close(messages)
+	g, h := split(20)
+	fmt.Println(g, h)
+
+	sq := Sqrt(261.1)
+	fmt.Printf("The square root of the number is %v and the TYPE is %T", sq, sq)
 
 	// ================================= END OF MAIN ================================= //
 }
+
+// Go only has one looping construct the FOR loop.
+// The basic for loop has three components separated by semicolon
+// The init statement : Executed before every iteration
+// The condition expression : evaluated before every iteration.
+// The post statement : Excuted at the end of every iteration.
+// The init and post statements are optional.
+// The condition is nessesary if is not present it will loop forever.
+
+func Sqrt(x float64) float64 {
+	z := 1.0
+	for {
+		z -= (z*z - x) / (2 * z)
+		// fmt.Printf("The type OF z is: %T\n", z)
+		// fmt.Printf("The type OF x is: %T\n", x)
+		// fmt.Println("The value of x is:", x)
+		z := z
+		// fmt.Println("The value of z is: ", z)
+		if z*z == float64(x) {
+			// fmt.Println(z * z)
+			break
+		}
+	}
+	return z
+}
+
+// Function declaration syntax
+// func (r receiver) identifier(parameters) (return(s)) { code }
 
 // Example Function declaration outside of main
 func plus(a int, b int) int {
@@ -349,6 +382,16 @@ func plus(a int, b int) int {
 // Example of function with multiple return values
 func vals() (int, int) {
 	return 3, 7
+}
+
+// Example of function two NAMED values it return.
+// Go's returned values may be named. if so they are treated as variables defined at the top of the function.
+// This is known as a naked return
+// Naked returns should only be used in short functions.
+func split(sum int) (x, y int) {
+	x = sum * 4 / 2
+	y = x - sum
+	return
 }
 
 // Variadic Functions can be used with any numbers of trailing arguments.
