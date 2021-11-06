@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -341,8 +342,29 @@ func main() {
 	fmt.Println(g, h)
 
 	sq := Sqrt(261.1)
-	fmt.Printf("The square root of the number is %v and the TYPE is %T", sq, sq)
+	fmt.Printf("The square root of the number is %v and the TYPE is %T\n", sq, sq)
 
+	osv := getOS()
+	// Switch with no condition is the same as switch true
+	switch osv {
+	case "linux":
+		fmt.Println("Windows sucks!!!")
+	case "darwin":
+		fmt.Println("YEY its Mac")
+	}
+
+	// A pointer holds the memory address of a value.
+	// The & operator generates a pointer to its operand.
+	// The * operator denotes the pointer underlaying value.
+	pointer, point := 40, 50
+	punt := &pointer
+	fmt.Println(punt, *punt)
+	pont := &point
+	fmt.Println(pont, *pont)
+	// Change the value of the pointer using *
+	*pont = 35
+	fmt.Println(point)
+	fmt.Println(*pont)
 	// ================================= END OF MAIN ================================= //
 }
 
@@ -544,4 +566,11 @@ func sampleBuffchannel() {
 	}
 	fmt.Println("################### Done ###################")
 
+}
+
+// getOS() provides the current user os enviroment
+func getOS() string {
+	// Get the current os
+	osv := runtime.GOOS
+	return osv
 }
