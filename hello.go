@@ -365,6 +365,29 @@ func main() {
 	*pont = 35
 	fmt.Println(point)
 	fmt.Println(*pont)
+
+	// file, err := os.Open("README.md")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// defer file.Close()
+
+	// scanner := bufio.NewScanner(file)
+	// for scanner.Scan() {
+	// 	fmt.Println(scanner.Text())
+	// 	buf := bufio.NewReader(os.Stdin)
+	// 	fmt.Print(">")
+	// 	sentence, err := buf.ReadBytes('\n')
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	} else {
+	// 		fmt.Println(string(sentence))
+	// 	}
+	// 	//fmt.Println(scanner.Text())
+	// }
+	// if err := scanner.Err(); err != nil {
+	// 	fmt.Println(err)
+	// }
 	// ================================= END OF MAIN ================================= //
 }
 
