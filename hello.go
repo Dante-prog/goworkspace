@@ -388,6 +388,26 @@ func main() {
 	// if err := scanner.Err(); err != nil {
 	// 	fmt.Println(err)
 	// }
+
+	sa1 := secreatagent{
+		person1: person1{
+			"Kevin",
+			"Bond",
+		},
+		ltk: true,
+	}
+
+	sa2 := secreatagent{
+		person1: person1{
+			"Kelvin",
+			"Bond",
+		},
+		ltk: false,
+	}
+
+	sa1.speak()
+	sa2.speak()
+
 	// ================================= END OF MAIN ================================= //
 }
 
@@ -457,7 +477,12 @@ type person struct {
 	age  int
 }
 
-// Create a new function with access to the person struct
+type person1 struct {
+	first string
+	last  string
+}
+
+// Create a new function with access to the person struct // In this case its returning the person struct not very usable.
 func newPerson(name string) *person {
 	p := person{name: name}
 	p.age = 42
@@ -596,4 +621,15 @@ func getOS() string {
 	// Get the current os
 	osv := runtime.GOOS
 	return osv
+}
+
+// Methods for types.
+type secreatagent struct {
+	person1 // Here this is of the person struct type .
+	ltk     bool
+}
+
+// We can now declare a function with a receiver of the secret  agent type and all types of secret  agent will have access to this method.
+func (s secreatagent) speak() {
+	fmt.Println("I am", s.first, s.last)
 }
