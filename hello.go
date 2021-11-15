@@ -408,6 +408,48 @@ func main() {
 	sa1.speak()
 	sa2.speak()
 
+	// Anonymous function example
+	func(x int) { // takes an int
+		fmt.Println(x)
+	}(42) // Pass in the args
+
+	// Function expressions
+	fu := func() {
+		fmt.Println("The func expression")
+	}
+	fu()
+
+	fs := func(x int) {
+		fmt.Println("Do you know what year it is: ", x)
+	}
+	fs(1984)
+
+	vuv := bar()
+	fmt.Printf("THE Returned value is of type: %T\n ", vuv)
+
+	yi := incrementor()
+	ji := incrementor()
+
+	fmt.Println(yi())
+	fmt.Println(yi())
+	fmt.Println(yi())
+	fmt.Println(ji())
+	fmt.Println(ji())
+
+	trk := truck{
+		delivers: "Fruits",
+	}
+
+	fmt.Println(trk)
+	changeMe(&trk)
+	fmt.Println(trk)
+
+	// Checking the number of CPU's a machine has
+	fmt.Printf("The number of CPU's is: %v\n", runtime.NumCPU())
+
+	// Checking the number of Goroutines
+	fmt.Printf("The number of Go Routines is : %v", runtime.NumGoroutine())
+
 	// ================================= END OF MAIN ================================= //
 }
 
@@ -439,6 +481,11 @@ func Sqrt(x float64) float64 {
 // Function declaration syntax
 // func (r receiver) identifier(parameters) (return(s)) { code }
 
+// Anonymous functions --> E.G func(){...}() --> Have to include the param at the end.
+// func(x int) {
+// 	fmt.Println(x)
+// }(42)
+
 // Example Function declaration outside of main
 func plus(a int, b int) int {
 	return a + b
@@ -447,6 +494,13 @@ func plus(a int, b int) int {
 // Example of function with multiple return values
 func vals() (int, int) {
 	return 3, 7
+}
+
+// Example of functions returning functions
+func bar() func() int {
+	return func() int {
+		return 451
+	}
 }
 
 // Example of function two NAMED values it return.
@@ -512,7 +566,8 @@ func student(name string, age int, current_grade int, grade int, gpa float64, sc
 
 }
 
-// Example of interfaces Go mechanism for grouping and naming related sets of methods
+// Example of interfaces Go mechanism for grouping and naming related sets of methods. Also any type that has
+// the methods in the interface is also of the interface name type.
 type geometry interface {
 	area() float64
 	perim() float64
@@ -523,7 +578,7 @@ type rect struct {
 	width, height float64
 }
 
-func (r rect) area() float64 { // Has to be with out the (r *rect) to be able to implement the methods in an interface.
+func (r rect) area() float64 { // Has to be without the (r *rect) to be able to implement the methods in an interface.
 	return r.width * r.height
 }
 func (r rect) perim() float64 {
@@ -581,6 +636,12 @@ func f(from string) {
 // if there is a corresponding receive ( <- chan ) ready to received the sent value
 //Buffered channel accept a limited number of values without a corresponing receiver for those values.
 
+// Example channel declaration send/receive/bidirectional
+// c := make( <- chan int)  // this is a receive only channel
+// cs := make(chan<- int) // Send only channel
+// cs := make(chan int) // Bidirectional channel
+// bc := make(chan int, 5) // Example Bidirectional Buffered channel can send and receive five things at once.
+
 func sampleBuffchannel() {
 	messages := make(chan string, 5) // Five is the maximum things the channel can hold at one.
 	// If for exmple more than three strings are passed at once it will crash.
@@ -625,7 +686,7 @@ func getOS() string {
 
 // Methods for types.
 type secreatagent struct {
-	person1 // Here this is of the person struct type .
+	person1 // Here this is of the person1 struct type .
 	ltk     bool
 }
 
@@ -633,3 +694,25 @@ type secreatagent struct {
 func (s secreatagent) speak() {
 	fmt.Println("I am", s.first, s.last)
 }
+
+// Closure functions --> Below example returns a func that returns an int
+func incrementor() func() int {
+	var x int
+	return func() int {
+		x++
+		return x
+	}
+}
+
+type truck struct {
+	delivers string
+}
+
+// The changeMe functions take a pointer to truck, can be called by changeMe(&truck)
+func changeMe(p *truck) {
+	p.delivers = "I can deliver everything and anything"
+}
+
+// Json marshall example --> https://play.golang.org/p/HINWtn30TsG
+// Json Unmarshal example --> https://play.golang.org/p/UPCdkPKLPmC
+// Concurrency example --> https://play.golang.org/p/KbwIAtNuy2c
