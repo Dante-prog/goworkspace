@@ -664,7 +664,7 @@ func sampleBuffchannel() {
 		// time.Sleep(time.Second)
 		// fmt.Printf("Hello message: %v \n", <-messages)
 	}
-	close(messages)
+	close(messages) // Close has to be used after you range over a channel.
 	fmt.Println("########################## Printing messages from the channel ##########################")
 	fmt.Print("\n")
 	for elem := range messages {
